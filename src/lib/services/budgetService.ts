@@ -1,7 +1,8 @@
 import { get, readable, writable, type Readable } from 'svelte/store';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Budget {
-	id: number;
+	id: string;
 	name: string;
 	description: string;
 	budgetedAmount: number;
@@ -12,13 +13,13 @@ export interface Budget {
 export interface IBudgetService {
 	budgets: Readable<Budget[]>;
 	addBudget: () => Budget;
-	removeBudget: (id: number) => void;
+	removeBudget: (id: string) => void;
 }
 
 var getBugetService = (): IBudgetService => {
-	const createModel = (): Budget => {
+	const createModel = (id: string): Budget => {
 		return {
-			id: Date.now(),
+			id,
 			name: 'Budget ABC',
 			description: 'Desc of Budget',
 			budgetedAmount: 550.0,
@@ -29,7 +30,10 @@ var getBugetService = (): IBudgetService => {
 
 	const models: Budget[] = [];
 
-	[...Array(7).keys()].forEach((x) => models.push({ ...createModel() }));
+    
+	[...Array(7).keys()].forEach((x) => models.push({ ...createModel(uuidv4()) }))
+
+
 
 	const bugetStore = writable<Budget[]>(models);
 	var { subscribe, set, update } = bugetStore;
@@ -37,14 +41,15 @@ var getBugetService = (): IBudgetService => {
 	return {
 		budgets: { subscribe },
 		addBudget: (): Budget => {
-			const budget = createModel();
+			const budget = createModel( uuidv4());
 			var budgets = get(bugetStore);
 			budgets.push(budget);
 			set(budgets);
 			return budget;
 		},
-		removeBudget: (id: number) => {
+		removeBudget: (id: string) => {
 			var budgets = get(bugetStore);
+			console.log(budgets);
 			budgets = budgets.filter((b: any) => b.id !== id);
 			set(budgets);
 		}

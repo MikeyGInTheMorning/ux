@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Card from '$lib/components/card.svelte';
 	import Buckets from './buckets.svelte';
-	import BudgetTotal from './budgetTotal.svelte';
+	import BudgetTotal from './totalBudget.svelte';
 </script>
 
 <div class="flex flex-col gap-5">

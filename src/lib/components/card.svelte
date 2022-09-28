@@ -7,7 +7,7 @@
 	console.log(title);
 </script>
 
-<div class=" w-full p-5 " in:fade={{ duration: 250 }} out:fade={{ duration: 250 }}>
+<div class=" w-full p-5 max-h-50vh" in:fade={{ duration: 250 }} out:fade={{ duration: 250 }}>
 	<div class="flex flex-col rounded shadow-2xl p-5">
 		{#if title !== undefined}
 			<div class="flex justify-between w-full">
