@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { Pie } from 'svelte-chartjs';
 	import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
+	import budgetService from '$lib/services/budgetService';
+	import { get } from 'svelte/store';
 
 	export let models: any;
+
+	const budgetStore = budgetService.budgets
+	var { subscribe } = budgetService.budgets
 
     const model = {
 		id: Date.now(),
@@ -24,7 +29,11 @@
 		]
 	};
 
-    $:datas = models.forEach((m:any) => {
+	var hasChanged = false
+
+	
+
+    $:datas = get(budgetService.budgets).forEach((m:any) => {
         data.labels.push(m.name)
         data.datasets[0].data.push(m.budgetedAmount)
     })

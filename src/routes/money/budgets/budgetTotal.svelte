@@ -1,8 +1,6 @@
 <script lang="ts">
 	import Card from '$lib/components/card.svelte';
 
-    export let models: any;
-
 	const model = {
 		budgetTotal: 3500,
 		current: 2215
