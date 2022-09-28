@@ -6,6 +6,7 @@
 	import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
 
 	const models = budgetService.budgets;
+	const totalBudget = budgetService.budgetTotal
 
 	let data: any = {
 		labels: [], //['Red', 'Green', 'Yellow', 'Grey', 'Dark Grey'],
@@ -19,18 +20,16 @@
 	};
 
 	budgetService.budgets.subscribe((updatedArray) => {
-		data.labels = []
-		data.datasets[0].data = []
+		data.labels = [];
+		data.datasets[0].data = [];
 
 		updatedArray.forEach((m: any) => {
 			data.labels.push(m.name);
 			data.datasets[0].data.push(m.budgetedAmount);
 		});
 	});
-	
+
 	ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
-
-
 </script>
 
 <Card title="Buckets">
@@ -97,14 +96,14 @@
 											>
 
 											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
-												><input bind:value={row.budgetedAmount} /></td
+												><input type="number" bind:value={row.budgetedAmount} /></td
 											>
 
 											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
 												>{row.currentAmount}</td
 											>
 											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
-												>{row.percentOfTotal}</td
+												>{((row.budgetedAmount/$totalBudget?.budgetTotal ?? 1) * 100).toFixed(0)}</td
 											>
 											<td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
 												<button

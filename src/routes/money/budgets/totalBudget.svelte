@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Card from '$lib/components/card.svelte';
+	import budgetService from '$lib/services/budgetService';
 
+	const budgetTotal = budgetService.budgetTotal;
 	const model = {
 		budgetTotal: 3500,
 		current: 2215
@@ -23,10 +25,11 @@
 							</label>
 							<div class="mt-1">
 								<input
-									bind:value={model.current}
+									value={$budgetTotal?.budgetTotal?.toFixed(2) ?? 0}
 									id="email"
 									name="email"
 									type="number"
+									disabled
 									class="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
 								/>
 							</div>
@@ -36,10 +39,11 @@
 							<label for="password" class="block text-sm font-medium text-gray-700"> Used </label>
 							<div class="mt-1">
 								<input
-									bind:value={model.current}
+									value={$budgetTotal?.current?.toFixed(2) ?? 0}
 									id="password"
 									name="password"
 									type="number"
+									disabled
 									class="block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border border-transparent rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300"
 								/>
 							</div>
