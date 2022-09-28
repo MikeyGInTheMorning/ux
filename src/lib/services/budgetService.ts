@@ -1,7 +1,7 @@
 import { get, readable, writable, type Readable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
 
-export interface Budget {
+export type Budget = {
 	id: string;
 	name: string;
 	description: string;
