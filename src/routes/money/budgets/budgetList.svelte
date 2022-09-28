@@ -39,8 +39,7 @@
 							<td class="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap"
 								>{row.name}</td
 							>
-							<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{row.budgetedAmount}</td
-							>
+							<input bind:value={row.budgetedAmount} class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"/>
 							<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{row.currentAmount}</td>
 							<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">{row.percentOfTotal}</td
 							>
