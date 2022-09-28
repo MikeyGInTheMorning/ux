@@ -1,4 +1,4 @@
-<div class="flex h-100vh overflow-hidden bg-white rounded-lg">
+<div class="flex h-100vh overflow-hidden bg-white rounded-right-lg">
     <div class="hidden md:flex md:flex-shrink-0">
         <div class="flex flex-col w-64">
             <div class="flex flex-col flex-grow pt-5 overflow-y-auto border-r bg-neutral-800">
@@ -17,7 +17,7 @@
                     <nav class="flex-1 space-y-1 bg-neutral-800">
                         <ul>
                             <li>
-                                <a class="inline-flex items-center w-full px-4 py-2 mt-1 text-base transition duration-500 ease-in-out transform border rounded-lg text-neutral-200 bg-neutral-900 border-neutral-900 focus:shadow-outline" href="#">
+                                <a class="inline-flex items-center w-full px-4 py-2 mt-1 text-base transition duration-500 ease-in-out transform border rounded-lg text-neutral-200 bg-neutral-900 border-neutral-900 focus:shadow-outline" href="/">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                                     </svg>
@@ -25,15 +25,15 @@
                                 </a>
                             </li>
                             <li>
-                                <a class="inline-flex items-center w-full px-4 py-2 mt-1 text-base transition duration-500 ease-in-out transform border rounded-lg text-neutral-200 border-neutral-800 hover:border-neutral-800 focus:shadow-outline hover:bg-neutral-900" href="#">
+                                <a class="inline-flex items-center w-full px-4 py-2 mt-1 text-base transition duration-500 ease-in-out transform border rounded-lg text-neutral-200 border-neutral-800 hover:border-neutral-800 focus:shadow-outline hover:bg-neutral-900" href="/money/transactions">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                                     </svg>
-                                    <span class="ml-4">Chat</span>
+                                    <span class="ml-4">Money</span>
                                 </a>
                             </li>
                             <li>
-                                <a class="inline-flex items-center w-full px-4 py-2 mt-1 text-base transition duration-500 ease-in-out transform border rounded-lg text-neutral-200 border-neutral-800 hover:border-neutral-800 focus:shadow-outline hover:bg-neutral-900" href="#">
+                                <a class="inline-flex items-center w-full px-4 py-2 mt-1 text-base transition duration-500 ease-in-out transform border rounded-lg text-neutral-200 border-neutral-800 hover:border-neutral-800 focus:shadow-outline hover:bg-neutral-900" href="/money/budgets">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                                     </svg>
@@ -96,18 +96,7 @@
     </div>
     <div class="flex flex-col flex-1 w-0 overflow-hidden">
         <main class="relative flex-1 overflow-y-auto focus:outline-none">
-            <div class="py-6">
-                <div class="px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
-                    <h1 class="text-lg text-neutral-600">Here is where you put your stuff</h1>
-                </div>
-                <div class="px-4 mx-auto max-w-7xl sm:px-6 md:px-8">
-                    <!-- Put your content here -->
-                    <div class="py-4">
-                        <div class="rounded-lg bg-neutral-50 h-96"></div>
-                    </div>
-                    <!-- Do not cross the closing tag underneath this coment-->
-                </div>
-            </div>
+             <slot/>
         </main>
     </div>
 </div>
