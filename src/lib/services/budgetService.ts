@@ -20,11 +20,12 @@ export type BudgetTotal = {
 export type Forecast = {
 	name: string;
 	estimatedAmount: number;
+	monthly: number;
 };
 
 export interface IBudgetService {
 	budgets: Writable<Budget[]>;
-	budgetTotal: Readable<BudgetTotal>;
+	budgetTotal: Writable<BudgetTotal>;
 	forecasts: Readable<Forecast[]>;
 	addBudget: () => Budget;
 	removeBudget: (id: string) => void;
@@ -52,7 +53,7 @@ var getBugetService = (): IBudgetService => {
 		targetBudget: 0,
 		estimatedIncome: 0
 	});
-	var { subscribe: totalSub, update: totalUpdate } = budgetTotal;
+	var { subscribe: tSub, update: tUpdate } = budgetTotal;
 
 	const bugetStore = writable<Budget[]>(models);
 	var { subscribe, set } = bugetStore;
@@ -61,9 +62,10 @@ var getBugetService = (): IBudgetService => {
 		const estimatedBudget = budgets.reduce((sum, current) => sum + current.estimatedBudget, 0);
 		const usedBudget = budgets.reduce((sum, current) => sum + current.usedBudget, 0);
 
-		totalUpdate((total) => {
+		tUpdate((total) => {
 			total.estimatedBudgetTotal = estimatedBudget;
 			total.usedBudget = usedBudget;
+			total.targetBudget = total.estimatedBudgetTotal *1.5
 			return total;
 		});
 	});
@@ -71,23 +73,24 @@ var getBugetService = (): IBudgetService => {
 	const forecastStore = writable<Forecast[]>([]);
 	var { subscribe: fSub, set: fSet, update: fupdate } = forecastStore;
 
-	totalSub((totals: BudgetTotal) => {
-		const monthlySavings = totals.estimatedBudgetTotal - totals.estimatedIncome;
+	tSub((totals: BudgetTotal) => {
+
 		const forecastArr: Forecast[] = [];
-		
+
 		[1, 2, 3, 4, 5, 6, 9, 12, 16, 24, 36, 60].forEach((x) =>
 			forecastArr.push({
 				name: `${x} month${x == 0 ? '' : 's'}`,
-				estimatedAmount: x * monthlySavings
+				estimatedAmount: x * Math.abs(((totals.estimatedIncome / 12)) - totals.estimatedBudgetTotal),
+				monthly: totals.estimatedIncome / 12
 			})
 		);
 
-		fSet(forecastArr)
+		fSet(forecastArr);
 	});
 
 	return {
 		budgets: bugetStore,
-		budgetTotal: { subscribe: totalSub },
+		budgetTotal,
 		forecasts: { subscribe: fSub },
 		addBudget: (): Budget => {
 			const budget = createModel(uuidv4());

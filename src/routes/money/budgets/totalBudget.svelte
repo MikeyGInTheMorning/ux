@@ -18,7 +18,10 @@
 					<div class="grid w-full">
 						<div class="w-full flex justify-between">
 							<div>{forecast.name}</div>
-							<div>${forecast.estimatedAmount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+							<div>{forecast.monthly?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+							<div>
+								${forecast.estimatedAmount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+							</div>
 						</div>
 					</div>
 				{/each}
@@ -27,12 +30,13 @@
 			<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 				<div class="px-4 py-8 sm:px-10">
 					<form class="space-y-6" action="#" method="POST">
-
 						<div>
-							<label for="password" class="block text-sm font-medium text-gray-700"> Target Budget </label>
+							<label for="password" class="block text-sm font-medium text-gray-700">
+								Target Budget
+							</label>
 							<div class="mt-1">
 								<input
-									bind:value={targetBudget}
+									bind:value={$budgetTotal.targetBudget}
 									id="password"
 									name="password"
 									type="number"
@@ -42,10 +46,12 @@
 						</div>
 
 						<div>
-							<label for="password" class="block text-sm font-medium text-gray-700"> Total Income </label>
+							<label for="password" class="block text-sm font-medium text-gray-700">
+								Total Income
+							</label>
 							<div class="mt-1">
 								<input
-									bind:value={totalIncome}
+									bind:value={$budgetTotal.estimatedIncome}
 									id="password"
 									name="password"
 									type="number"
@@ -65,11 +71,13 @@
 									name="email"
 									type="number"
 									disabled
-									class="{$budgetTotal?.estimatedIncome > targetBudget ? 'border-red' : 'border-transparent'} block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border  rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 border-2 border-red"
+									class="border-transparent block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border  rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 border-2"
 								/>
+								<!-- class="{$budgetTotal?.estimatedIncome > targetBudget
+									? 'border-red'
+									: 'border-transparent'} block w-full px-5 py-3 text-base text-neutral-600 placeholder-gray-300 transition duration-500 ease-in-out transform border  rounded-lg bg-gray-50 focus:outline-none focus:border-transparent focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-300 border-2" -->
 							</div>
 						</div>
-
 
 						<div>
 							<label for="password" class="block text-sm font-medium text-gray-700"> Used </label>
@@ -84,7 +92,6 @@
 								/>
 							</div>
 						</div>
-
 					</form>
 					<!-- <div>
                         <button
