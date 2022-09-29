@@ -5,19 +5,27 @@ export type Budget = {
 	id: string;
 	name: string;
 	description: string;
-	budgetedAmount: number;
-	currentAmount: number;
+	estimatedBudget: number;
+	usedBudget: number;
 	percentOfTotal: number;
 };
 
 export type BudgetTotal = {
-	budgetTotal: number;
-	current: number;
+	estimatedIncome: number;
+	estimatedBudgetTotal: number;
+	targetBudget: number;
+	usedBudget: number;
+};
+
+export type Forecast = {
+	name: string;
+	estimatedAmount: number;
 };
 
 export interface IBudgetService {
 	budgets: Writable<Budget[]>;
 	budgetTotal: Readable<BudgetTotal>;
+	forecasts: Readable<Forecast[]>;
 	addBudget: () => Budget;
 	removeBudget: (id: string) => void;
 }
@@ -28,8 +36,8 @@ var getBugetService = (): IBudgetService => {
 			id,
 			name: 'Budget ABC',
 			description: 'Desc of Budget',
-			budgetedAmount: 550.0,
-			currentAmount: 523.21,
+			estimatedBudget: 550.0,
+			usedBudget: 523.21,
 			percentOfTotal: 23
 		};
 	};
@@ -38,21 +46,49 @@ var getBugetService = (): IBudgetService => {
 
 	[...Array(7).keys()].forEach((x) => models.push({ ...createModel(uuidv4()) }));
 
-	const budgetTotal = writable<BudgetTotal>({ budgetTotal: 0, current: 0 });
-	var { subscribe: totalSub, set: totalSet } = budgetTotal;
+	const budgetTotal = writable<BudgetTotal>({
+		estimatedBudgetTotal: 0,
+		usedBudget: 0,
+		targetBudget: 0,
+		estimatedIncome: 0
+	});
+	var { subscribe: totalSub, update: totalUpdate } = budgetTotal;
 
 	const bugetStore = writable<Budget[]>(models);
 	var { subscribe, set } = bugetStore;
 
 	subscribe((budgets: Budget[]) => {
-		const budgetTotal = budgets.reduce((sum, current) => sum + current.budgetedAmount, 0);
-		const current = budgets.reduce((sum, current) => sum + current.currentAmount, 0);
-		totalSet({ budgetTotal, current });
+		const estimatedBudget = budgets.reduce((sum, current) => sum + current.estimatedBudget, 0);
+		const usedBudget = budgets.reduce((sum, current) => sum + current.usedBudget, 0);
+
+		totalUpdate((total) => {
+			total.estimatedBudgetTotal = estimatedBudget;
+			total.usedBudget = usedBudget;
+			return total;
+		});
+	});
+
+	const forecastStore = writable<Forecast[]>([]);
+	var { subscribe: fSub, set: fSet, update: fupdate } = forecastStore;
+
+	totalSub((totals: BudgetTotal) => {
+		const monthlySavings = totals.estimatedBudgetTotal - totals.estimatedIncome;
+		const forecastArr: Forecast[] = [];
+		
+		[1, 2, 3, 4, 5, 6, 9, 12, 16, 24, 36, 60].forEach((x) =>
+			forecastArr.push({
+				name: `${x} month${x == 0 ? '' : 's'}`,
+				estimatedAmount: x * monthlySavings
+			})
+		);
+
+		fSet(forecastArr)
 	});
 
 	return {
 		budgets: bugetStore,
 		budgetTotal: { subscribe: totalSub },
+		forecasts: { subscribe: fSub },
 		addBudget: (): Budget => {
 			const budget = createModel(uuidv4());
 			var budgets = get(bugetStore);

@@ -1,9 +1,8 @@
 <script lang="ts">
 	import Card from '$lib/components/card.svelte';
-	import budgetService from '$lib/services/budgetService';
-	import { get } from 'svelte/store';
+	import budgetService, { type Budget as Bucket } from '$lib/services/budgetService';
+	import { ArcElement, CategoryScale, Chart as ChartJS, Legend, Title, Tooltip } from 'chart.js';
 	import { Pie } from 'svelte-chartjs';
-	import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement, CategoryScale } from 'chart.js';
 
 	const models = budgetService.budgets;
 	const totalBudget = budgetService.budgetTotal
@@ -23,9 +22,9 @@
 		data.labels = [];
 		data.datasets[0].data = [];
 
-		updatedArray.forEach((m: any) => {
+		updatedArray.forEach((m: Bucket) => {
 			data.labels.push(m.name);
-			data.datasets[0].data.push(m.budgetedAmount);
+			data.datasets[0].data.push(m.estimatedBudget);
 		});
 	});
 
@@ -96,14 +95,14 @@
 											>
 
 											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
-												><input type="number" bind:value={row.budgetedAmount} /></td
+												><input type="number" bind:value={row.usedBudget} /></td
 											>
 
 											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
-												>{row.currentAmount}</td
+												>{row.usedBudget}</td
 											>
 											<td class="px-6 py-4 text-sm text-gray-500 whitespace-nowrap"
-												>{((row.budgetedAmount/$totalBudget?.budgetTotal ?? 1) * 100).toFixed(0)}</td
+												>{((row.estimatedBudget/$totalBudget?.estimatedBudgetTotal ?? 1) * 100).toFixed(0)}</td
 											>
 											<td class="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
 												<button
