@@ -34,7 +34,7 @@ app.get('/api/totals', async (req, res) => {
 
 app.post('/api/budgets', async (req, res) => {
     await fs.writeFile('./budgets.json', JSON.stringify(req.body), { encoding: 'utf-8' })
-    res.json({ message: 'Hello World!' })
+    res.json({ })
 })
 
 app.get('/api/budgets', async (req, res) => {
@@ -45,7 +45,7 @@ app.get('/api/budgets', async (req, res) => {
     } catch (error) {
         console.log(error)
     }
-    res.json( {budgets})
+    res.json(budgets)
 })
 
 

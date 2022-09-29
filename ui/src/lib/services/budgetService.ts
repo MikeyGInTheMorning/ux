@@ -27,8 +27,9 @@ export interface IBudgetService {
 	budgets: Writable<Budget[]>;
 	budgetTotal: Writable<BudgetTotal>;
 	forecasts: Readable<Forecast[]>;
-	addBudget: () => Budget;
-	removeBudget: (id: string) => void;
+	addBudget: () => Promise<Budget>;
+	removeBudget: (id: string) => Promise<void>;
+	save: () => Promise<void>;
 }
 
 var getBugetService = async (): Promise<IBudgetService> => {
@@ -43,14 +44,20 @@ var getBugetService = async (): Promise<IBudgetService> => {
 		};
 	};
 
-	const getBudgets =  async (): Promise<Budget[]> =>{
-		const res = await fetch('http://localhost:4000/api/budgets')
-		return await res.json() as Budget[]
-	}
+	const getBudgets = async (): Promise<Budget[]> => {
+		const res = await fetch('http://localhost:4000/api/budgets');
+		return (await res.json()) as Budget[];
+	};
 
-	const models: Budget[] = [];
-
-	[...Array(7).keys()].forEach((x) => models.push({ ...createModel(uuidv4()) }));
+	const saveBudgets = async (budgets: Budget[]): Promise<void> => {
+		const res = await fetch('http://localhost:4000/api/budgets', {
+			method: 'POST',
+			body: JSON.stringify(budgets),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+	};
 
 	const budgetTotal = writable<BudgetTotal>({
 		estimatedBudgetTotal: 0,
@@ -58,11 +65,10 @@ var getBugetService = async (): Promise<IBudgetService> => {
 		targetBudget: 0,
 		estimatedIncome: 0
 	});
+	
 	var { subscribe: tSub, update: tUpdate } = budgetTotal;
 
-	const bd = await getBudgets()
-	console.log(bd)
-	const bugetStore = writable<Budget[]>(models);
+	const bugetStore = writable<Budget[]>(await getBudgets());
 	var { subscribe, set } = bugetStore;
 
 	subscribe((budgets: Budget[]) => {
@@ -72,7 +78,7 @@ var getBugetService = async (): Promise<IBudgetService> => {
 		tUpdate((total) => {
 			total.estimatedBudgetTotal = estimatedBudget;
 			total.usedBudget = usedBudget;
-			total.targetBudget = total.estimatedBudgetTotal *1.5
+			total.targetBudget = total.estimatedBudgetTotal * 1.5;
 			return total;
 		});
 	});
@@ -81,13 +87,12 @@ var getBugetService = async (): Promise<IBudgetService> => {
 	var { subscribe: fSub, set: fSet, update: fupdate } = forecastStore;
 
 	tSub((totals: BudgetTotal) => {
-
 		const forecastArr: Forecast[] = [];
 
 		[1, 2, 3, 4, 5, 6, 9, 12, 16, 24, 36, 60].forEach((x) =>
 			forecastArr.push({
 				name: `${x} month${x == 0 ? '' : 's'}`,
-				estimatedAmount: x * Math.abs(((totals.estimatedIncome / 12)) - totals.estimatedBudgetTotal),
+				estimatedAmount: x * Math.abs(totals.estimatedIncome / 12 - totals.estimatedBudgetTotal),
 				monthly: totals.estimatedIncome / 12
 			})
 		);
@@ -99,19 +104,22 @@ var getBugetService = async (): Promise<IBudgetService> => {
 		budgets: bugetStore,
 		budgetTotal,
 		forecasts: { subscribe: fSub },
-		addBudget: (): Budget => {
+		addBudget: async (): Promise<Budget> => {
 			const budget = createModel(uuidv4());
 			var budgets = get(bugetStore);
 			budgets.push(budget);
 			set(budgets);
+			await saveBudgets(budgets);
 			return budget;
 		},
-		removeBudget: (id: string) => {
+		removeBudget: async (id: string) => {
 			var budgets = get(bugetStore);
 			console.log(budgets);
 			budgets = budgets.filter((b: any) => b.id !== id);
 			set(budgets);
-		}
+			await saveBudgets(budgets);
+		},
+		save: async () => await saveBudgets(get(bugetStore))
 	};
 };
 

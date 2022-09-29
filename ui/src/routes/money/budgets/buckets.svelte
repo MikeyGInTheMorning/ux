@@ -38,10 +38,11 @@
 			class="text-zinc-200 bg-blue-400 hover:bg-blue-300 active:bg-blue-500 w-120px h-40px rounded raised"
 			>Add</button
 		>
-		<button
+		<!-- <button
+		on:click="{budgetService.save}"
 			class="text-zinc-200 bg-green-500 hover:bg-green-400 active:bg-green-600 w-120px h-40px  rounded raised"
 			>Save</button
-		>
+		> -->
 	</div>
 	<section class="text-gray-600" slot="body">
 		<div class=" px-5 py-4 mx-auto">
