@@ -11,43 +11,23 @@ app.use(cors({
 
 const port = 4000
 
-app.post('/api/totals', async (req, res) => {
-
-    const body = req.body
-    const body2 = JSON.stringify(req.body)
-    console.log(body)
-    console.log(body2)
-    await fs.writeFile('./totals.json', JSON.stringify(req.body), { encoding: 'utf-8' })
-    res.json({ message: 'Hello World!' })
+app.post('/api/:fileName', async (req, res) => {
+    const fileName = req.params.fileName
+    await fs.writeFile(`./${fileName}.json`, JSON.stringify(req.body), { encoding: 'utf-8' })
+    res.json({})
 })
 
-app.get('/api/totals', async (req, res) => {
-    let totals = {}
+app.get('/api/:fileName', async (req, res) => {
+    let data
 
     try {
-        totals = await fs.readFile('./totals.json', { encoding: 'utf-8' })
+        const fileName = req.params.fileName
+        data = await fs.readFile(`./${fileName}.json`, { encoding: 'utf-8' })
     } catch (error) {
         console.log(error)
     }
-    res.json({ totals })
+    res.json({ data })
 })
-
-app.post('/api/budgets', async (req, res) => {
-    await fs.writeFile('./budgets.json', JSON.stringify(req.body), { encoding: 'utf-8' })
-    res.json({ })
-})
-
-app.get('/api/budgets', async (req, res) => {
-    var budgets = {}
-
-    try {
-        budgets = JSON.parse(await fs.readFile('./budgets.json', 'utf-8'))
-    } catch (error) {
-        console.log(error)
-    }
-    res.json(budgets)
-})
-
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)

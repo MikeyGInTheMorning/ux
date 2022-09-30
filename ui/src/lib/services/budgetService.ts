@@ -23,10 +23,19 @@ export type Forecast = {
 	monthly: number;
 };
 
+export type Transaction = {
+	id: string;
+	date: Date;
+	name: string;
+	amount: number;
+	bucketId: string;
+};
+
 export interface IBudgetService {
 	budgets: Writable<Budget[]>;
 	budgetTotal: Writable<BudgetTotal>;
 	forecasts: Readable<Forecast[]>;
+	transactions: Writable<Transaction[]>;
 	addBudget: () => Promise<Budget>;
 	removeBudget: (id: string) => Promise<void>;
 	save: () => Promise<void>;
@@ -46,7 +55,9 @@ var getBugetService = async (): Promise<IBudgetService> => {
 
 	const getBudgets = async (): Promise<Budget[]> => {
 		const res = await fetch('http://localhost:4000/api/budgets');
-		return (await res.json()) as Budget[];
+		const body = await res.json();
+		const ret = body.data ? JSON.parse(body.data) : [];
+		return ret;
 	};
 
 	const saveBudgets = async (budgets: Budget[]): Promise<void> => {
@@ -65,11 +76,12 @@ var getBugetService = async (): Promise<IBudgetService> => {
 		targetBudget: 0,
 		estimatedIncome: 0
 	});
-	
+
 	var { subscribe: tSub, update: tUpdate } = budgetTotal;
 
-	const bugetStore = writable<Budget[]>(await getBudgets());
-	var { subscribe, set } = bugetStore;
+	const serverBudgets = await getBudgets();
+	const budgets = writable<Budget[]>(serverBudgets);
+	var { subscribe, set } = budgets;
 
 	subscribe((budgets: Budget[]) => {
 		const estimatedBudget = budgets.reduce((sum, current) => sum + current.estimatedBudget, 0);
@@ -100,26 +112,29 @@ var getBugetService = async (): Promise<IBudgetService> => {
 		fSet(forecastArr);
 	});
 
+	const transactions = writable<Transaction[]>([]);
+	var { subscribe: trSub, update: trUpdate } = transactions;
+
 	return {
-		budgets: bugetStore,
+		budgets: budgets,
 		budgetTotal,
+		transactions,
 		forecasts: { subscribe: fSub },
 		addBudget: async (): Promise<Budget> => {
 			const budget = createModel(uuidv4());
-			var budgets = get(bugetStore);
-			budgets.push(budget);
-			set(budgets);
-			await saveBudgets(budgets);
+			var b = get(budgets);
+			b.push(budget);
+			set(b);
+			await saveBudgets(b);
 			return budget;
 		},
 		removeBudget: async (id: string) => {
-			var budgets = get(bugetStore);
-			console.log(budgets);
-			budgets = budgets.filter((b: any) => b.id !== id);
-			set(budgets);
-			await saveBudgets(budgets);
+			var b = get(budgets);
+			b = b.filter((b: any) => b.id !== id);
+			set(b);
+			await saveBudgets(b);
 		},
-		save: async () => await saveBudgets(get(bugetStore))
+		save: async () => await saveBudgets(get(budgets))
 	};
 };
 
